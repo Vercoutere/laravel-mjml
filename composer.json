@@ -1,0 +1,33 @@
+{
+    "name": "vercoutere/laravel-mjml",
+    "description": "A package that allows you to use MJML templates within your Laravel mailables.",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Vercoutere\\LaravelMjml\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Jonathan Vercoutere",
+            "email": "jonathan.vercoutere@gmail.com"
+        }
+    ],
+    "require-dev": {
+        "orchestra/testbench": "^7.7"
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Vercoutere\\LaravelMjml\\MjmlServiceProvider"
+            ]
+        }
+    },
+    "require": {
+        "php": "^8.1.0",
+        "guzzlehttp/guzzle": "^7.5",
+        "spatie/once": "^3.1",
+        "symfony/process": "^6.1",
+        "soundasleep/html2text": "^2.0"
+    }
+}
