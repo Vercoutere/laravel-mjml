@@ -9,28 +9,6 @@ use Vercoutere\LaravelMjml\MjmlRenderer;
 class MjmlMailable extends Mailable
 {
     /**
-     * The MJML template for the message (if applicable).
-     *
-     * @var string
-     */
-    public $mjml;
-
-    /**
-     * Set the MJML template for the message.
-     *
-     * @param  string  $view
-     * @param  array  $data
-     * @return $this
-     */
-    public function mjml($view, array $data = [])
-    {
-        $this->mjml = $view;
-        $this->viewData = array_merge($this->viewData, $data);
-
-        return $this;
-    }
-
-    /**
      * Build the view for the message.
      *
      * @return array|string
@@ -39,7 +17,7 @@ class MjmlMailable extends Mailable
      */
     protected function buildView()
     {
-        if (isset($this->mjml)) {
+        if (isset($this->view)) {
             return $this->buildMjmlView();
         }
 
@@ -59,8 +37,8 @@ class MjmlMailable extends Mailable
         $data = $this->buildViewData();
 
         return [
-            'html' => $mjml->render($this->mjml, $data),
-            'text' => $this->textView ?? $mjml->renderText($this->mjml, $data),
+            'html' => $mjml->render($this->view, $data),
+            'text' => $this->textView ?? $mjml->renderText($this->view, $data),
         ];
     }
 }
