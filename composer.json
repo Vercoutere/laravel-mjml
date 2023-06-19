@@ -1,5 +1,6 @@
 {
     "name": "vercoutere/laravel-mjml",
+    "version": "0.1.0",
     "description": "A package that allows you to use MJML templates within your Laravel mailables.",
     "license": "MIT",
     "autoload": {
