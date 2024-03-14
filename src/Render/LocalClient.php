@@ -2,7 +2,6 @@
 
 namespace Vercoutere\LaravelMjml\Render;
 
-use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 use Symfony\Component\Process\Process;
 
