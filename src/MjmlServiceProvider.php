@@ -2,9 +2,13 @@
 
 namespace Vercoutere\LaravelMjml;
 
+use Illuminate\View\DynamicComponent;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
 use Vercoutere\LaravelMjml\MjmlRenderer;
+use Illuminate\View\Engines\CompilerEngine;
+use Illuminate\View\Engines\EngineResolver;
+use Vercoutere\LaravelMjml\Commands\ViewCacheCommand;
 use Vercoutere\LaravelMjml\Render\ApiClient;
 use Vercoutere\LaravelMjml\Render\MjmlClient;
 use Vercoutere\LaravelMjml\Render\LocalClient;
@@ -36,6 +40,11 @@ class MjmlServiceProvider extends ServiceProvider
         $this->app->when(LocalClient::class)
             ->needs('$nodePath')
             ->giveConfig('mjml.node_path');
+
+        $this->registerMjmlCompiler();
+        $this->registerMjmlEngine();
+
+        $this->app['view']->addExtension('mjml.blade.php', 'mjml');
     }
 
     public function boot()
@@ -43,5 +52,50 @@ class MjmlServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__.'/config.php' => config_path('mjml.php'),
         ]);
+
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+                ViewCacheCommand::class,
+            ]);
+        }
+    }
+
+    /**
+     * Register the MJML compiler implementation.
+     *
+     * @return void
+     */
+    public function registerMjmlCompiler()
+    {
+        $this->app->singleton('mjml.compiler', function ($app) {
+            return tap(new MjmlCompiler(
+                $app['files'],
+                $app['config']['view.compiled'],
+                $app['config']->get('view.relative_hash', false) ? $app->basePath() : '',
+                $app['config']->get('view.cache', true),
+                $app['config']->get('view.compiled_extension', 'php'),
+            ), function ($compiler) {
+                $compiler->setClient($this->app->make(MjmlClient::class));
+                $compiler->component('dynamic-component', DynamicComponent::class);
+            });
+        });
+    }
+
+    /**
+     * Register the MJML engine implementation.
+     *
+     * @return void
+     */
+    public function registerMjmlEngine()
+    {
+        $this->app['view.engine.resolver']->register('mjml', function () {
+            $compiler = new CompilerEngine($this->app['mjml.compiler'], $this->app['files']);
+
+            $this->app->terminating(static function () use ($compiler) {
+                $compiler->forgetCompiledOrNotExpired();
+            });
+
+            return $compiler;
+        });
     }
 }

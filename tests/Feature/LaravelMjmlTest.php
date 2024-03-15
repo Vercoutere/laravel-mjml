@@ -35,6 +35,7 @@ class LaravelMjmlTest extends \Orchestra\Testbench\TestCase
     {
         $this->afterApplicationCreated(function () {
             View::addLocation(realpath(__DIR__ . '/../Fixtures/views'));
+            config()->set('view.cache', false);
         });
 
         parent::setUp();
@@ -68,7 +69,7 @@ class LaravelMjmlTest extends \Orchestra\Testbench\TestCase
 
         $process
             ->expects()
-            ->setInput("<mjml><mj-body>Laravel</mj-body></mjml>\n")
+            ->setInput("<mjml><mj-body><?php echo e(config('app.name')); ?></mj-body></mjml>\n")
             ->andReturnSelf();
 
         $process
@@ -99,7 +100,7 @@ class LaravelMjmlTest extends \Orchestra\Testbench\TestCase
         Http::assertSent(function (Request $request) {
             return $request->method() == 'POST' &&
             $request->url() == 'https://api.mjml.io/v1/render' &&
-            $request['mjml'] == "<mjml><mj-body>Laravel</mj-body></mjml>\n";
+            $request['mjml'] == "<mjml><mj-body><?php echo e(config('app.name')); ?></mj-body></mjml>\n";
         });
     }
 }

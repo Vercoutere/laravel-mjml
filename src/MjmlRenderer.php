@@ -31,11 +31,10 @@ class MjmlRenderer
     public function render($view, array $data = [])
     {
         return once(function () use ($view, $data) {
+
             $this->view->flushFinderCache();
 
-            return $this->renderHtml(
-                $this->view->make($view, $data)->render()
-            );
+            return new HtmlString($this->view->make($view, $data)->render());
         });
     }
 
@@ -57,16 +56,5 @@ class MjmlRenderer
             ENT_QUOTES,
             'UTF-8',
         ));
-    }
-
-    /**
-     * Render the MJML template into HTML.
-     *
-     * @param string $renderedView
-     * @return \Illuminate\Support\HtmlString
-     */
-    protected function renderHtml(string $renderedView)
-    {
-        return new HtmlString($this->client->render($renderedView));
     }
 }
