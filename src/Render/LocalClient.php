@@ -12,7 +12,15 @@ class LocalClient implements MjmlClient
 
     public function render(string $mjml): string
     {
-        $process = new Process([
+        return $this->getProcess()
+            ->setInput($mjml)
+            ->mustRun()
+            ->getOutput();
+    }
+
+    protected function getProcess(): Process
+    {
+        return new Process([
             $this->nodePath,
             $this->binaryPath,
             '-i',
@@ -21,10 +29,5 @@ class LocalClient implements MjmlClient
             '-s',
             '--noStdoutFileComment',
         ]);
-
-        $process->setInput($mjml);
-        $process->mustRun();
-
-        return $process->getOutput();
     }
 }
