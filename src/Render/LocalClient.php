@@ -2,7 +2,6 @@
 
 namespace Vercoutere\LaravelMjml\Render;
 
-use Illuminate\Support\Str;
 use Symfony\Component\Process\Process;
 
 class LocalClient implements MjmlClient
@@ -27,10 +26,5 @@ class LocalClient implements MjmlClient
         $process->mustRun();
 
         return $process->getOutput();
-    }
-
-    protected function compiledFilePath(string $content)
-    {
-        return Str::finish(config('view.compiled'), '/') . hash('sha256', $content);
     }
 }
