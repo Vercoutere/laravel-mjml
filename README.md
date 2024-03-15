@@ -1,3 +1,5 @@
+[![Run tests](https://github.com/Vercoutere/laravel-mjml/actions/workflows/run-tests.yml/badge.svg)](https://github.com/Vercoutere/laravel-mjml/actions/workflows/run-tests.yml)
+
 # Installation
 Installing this package is done using Composer:
 ```
