@@ -3,7 +3,6 @@
 namespace Vercoutere\LaravelMjml\Tests\Feature;
 
 use Illuminate\Http\Client\Request;
-use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Http;
 use Mockery;
 use Mockery\MockInterface;
@@ -36,10 +35,6 @@ class LaravelMjmlTest extends \Orchestra\Testbench\TestCase
     {
         $this->afterApplicationCreated(function () {
             View::addLocation(realpath(__DIR__ . '/../Fixtures/views'));
-            // Laravel automatically disables view caching in testing,
-            // but since we add our own files to the view cache we still
-            // have to trigger the cache to be cleared after running our tests.
-            Artisan::call('view:clear');
         });
 
         parent::setUp();

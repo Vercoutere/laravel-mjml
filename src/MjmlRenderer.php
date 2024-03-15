@@ -3,9 +3,7 @@
 namespace Vercoutere\LaravelMjml;
 
 use Soundasleep\Html2Text;
-use Illuminate\Support\Str;
 use Illuminate\Support\HtmlString;
-use Illuminate\Support\Facades\File;
 use Vercoutere\LaravelMjml\MjmlApiClient;
 use Vercoutere\LaravelMjml\Render\MjmlClient;
 use Illuminate\Contracts\View\Factory as ViewFactory;
@@ -69,30 +67,6 @@ class MjmlRenderer
      */
     protected function renderHtml(string $renderedView)
     {
-        $filePath = $this->filePath($renderedView);
-
-        if (!File::exists($filePath)) {
-            File::put(
-                $filePath,
-                $this->client->render($renderedView)
-            );
-        }
-
-        return new HtmlString(File::get($filePath));
-    }
-
-    /**
-     * Generate a unique filepath for a rendered view.
-     *
-     * @param string $renderedView
-     * @return string
-     */
-    protected function filePath(string $renderedView)
-    {
-        return implode([
-            Str::finish(config('view.compiled'), '/'),
-            hash('sha256', $renderedView),
-            '.html',
-        ]);
+        return new HtmlString($this->client->render($renderedView));
     }
 }
