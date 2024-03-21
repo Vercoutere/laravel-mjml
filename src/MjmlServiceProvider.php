@@ -7,7 +7,6 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
 use Vercoutere\LaravelMjml\MjmlRenderer;
 use Illuminate\View\Engines\CompilerEngine;
-use Illuminate\View\Engines\EngineResolver;
 use Vercoutere\LaravelMjml\Commands\ViewCacheCommand;
 use Vercoutere\LaravelMjml\Render\ApiClient;
 use Vercoutere\LaravelMjml\Render\MjmlClient;
@@ -36,10 +35,6 @@ class MjmlServiceProvider extends ServiceProvider
         $this->app->when(LocalClient::class)
             ->needs('$binaryPath')
             ->giveConfig('mjml.binary_path');
-
-        $this->app->when(LocalClient::class)
-            ->needs('$nodePath')
-            ->giveConfig('mjml.node_path');
 
         $this->registerMjmlCompiler();
         $this->registerMjmlEngine();

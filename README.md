@@ -19,10 +19,6 @@ MJML_STRATEGY=local/api
 To use the local strategy you will need to have both NodeJS and MJML installed on your machine.
 It is recommended to install MJML using the available [npm package](https://www.npmjs.com/package/mjml).
 
-If the node installation you want MJML to use is located at any path other than just `node`, you will need to configure it.
-```
-MJML_NODE_PATH=/path/to/your/node/installation
-```
 If you're not installing MJML using the npm package, you will also need to configure the path to your MJML installation:
 ```
 MJML_BINARY_PATH=/path/to/your/mjml/installation

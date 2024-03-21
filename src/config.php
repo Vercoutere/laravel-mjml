@@ -21,9 +21,4 @@ return [
      * strategy.
      */
     'binary_path' => env('MJML_BINARY_PATH', base_path('node_modules/.bin/mjml')),
-
-    /**
-     * The path to your node binary when using the binary strategy.
-     */
-    'node_path' => env('MJML_NODE_PATH', 'node'),
 ];
