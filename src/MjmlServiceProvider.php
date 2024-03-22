@@ -65,7 +65,7 @@ class MjmlServiceProvider extends ServiceProvider
         $this->app->singleton('mjml.compiler', function ($app) {
             return tap(new MjmlCompiler(
                 $app['files'],
-                $app['config']['view.compiled'],
+                $app['config']->get('view.compiled'),
                 $app['config']->get('view.relative_hash', false) ? $app->basePath() : '',
                 $app['config']->get('view.cache', true),
                 $app['config']->get('view.compiled_extension', 'php'),

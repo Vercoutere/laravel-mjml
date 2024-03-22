@@ -3,6 +3,7 @@
 namespace Vercoutere\LaravelMjml\Tests\Feature;
 
 use Illuminate\Http\Client\Request;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Http;
 use Mockery;
 use Mockery\MockInterface;
@@ -10,10 +11,11 @@ use Illuminate\Support\Facades\View;
 use PHPUnit\Framework\Attributes\Test;
 use Vercoutere\LaravelMjml\Render\LocalClient;
 use Orchestra\Testbench\Attributes\DefineEnvironment;
+use Vercoutere\LaravelMjml\Render\MjmlClient;
 
 class LaravelMjmlTest extends \Orchestra\Testbench\TestCase
 {
-    const HTML = '<html><head></head><body>some html</body></html>';
+    const HTML = '<html><head></head><body><div>some html</div></body></html>';
 
     /**
      * Get package providers.
@@ -69,7 +71,7 @@ class LaravelMjmlTest extends \Orchestra\Testbench\TestCase
 
         $process
             ->expects()
-            ->setInput("<mjml><mj-body><?php echo e(config('app.name')); ?></mj-body></mjml>\n")
+            ->setInput("<mjml><mj-body>{{ config('app.name') }}</mj-body></mjml>\n")
             ->andReturnSelf();
 
         $process
@@ -100,8 +102,33 @@ class LaravelMjmlTest extends \Orchestra\Testbench\TestCase
         Http::assertSent(function (Request $request) {
             return $request->method() == 'POST' &&
             $request->url() == 'https://api.mjml.io/v1/render' &&
-            $request['mjml'] == "<mjml><mj-body><?php echo e(config('app.name')); ?></mj-body></mjml>\n";
+            $request['mjml'] == "<mjml><mj-body>{{ config('app.name') }}</mj-body></mjml>\n";
         });
+    }
+
+    #[Test]
+    public function it_wraps_and_unwraps()
+    {
+        $this->mock(MjmlClient::class, function (MockInterface $mock) {
+            $mock->expects()
+                ->render('<mjml><mj-body><mj-raw>@unwrapped</mj-raw></mj-body></mjml>')
+                ->andReturn(self::HTML);
+            $mock->expects()
+                ->render('<mjml><mj-body><mj-raw>@wrapped</mj-raw></mj-body></mjml>')
+                ->andReturn(self::HTML);
+        });
+
+        $compiler = App::make('mjml.compiler');
+
+        $this->assertEquals(
+            'some html',
+            $compiler->compileString('<mj-raw>@unwrapped</mj-raw>'),
+        );
+
+        $this->assertEquals(
+            self::HTML,
+            $compiler->compileString('<mjml><mj-body><mj-raw>@wrapped</mj-raw></mj-body></mjml>'),
+        );
     }
 }
 
